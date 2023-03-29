@@ -10,6 +10,7 @@ setup(
     name='sshlab',
     version=version['__version__'],
     description='A tool for launching Jupyter Notebooks on remote servers using SSH',
+    long_description=open('README.md',  encoding='utf-8').read(),
     author='Thomas Vuillaume',
     author_email='thomas.vuillaume@lapp.in2p3.fr',
     url='https://github.com/vuillaut/sshlab',
