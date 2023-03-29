@@ -7,7 +7,7 @@ import os
 import signal
 import atexit
 
-DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yaml"
+DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
 # Function to check if a port is available
 def is_port_available(port):
