@@ -10,6 +10,13 @@ Copy the example settings file `.sshlab_config.yml` to your HOME and edit it to 
 
 ## Install
 
+
+```
+pip install sshlab
+```
+
+or from source code:
+
 ```
 pip install .
 ```
