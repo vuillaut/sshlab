@@ -1,0 +1,35 @@
+## List of configurations
+# The first one is the default one if none is passed to the main script
+
+singularity_config:
+  SSH:
+    user: username
+    server: server.com
+    port: 8888
+    ip: 127.0.0.1
+
+  Environment:
+    cmd: singularity exec
+    target: singularity_image.sif
+    options: --bind /home:/user
+
+  Jupyter:
+    flavor: lab
+    options: --no-browser --notebook-dir=/workspace
+
+
+conda:
+  SSH:
+    user: username
+    server: another.server
+    port: 8889
+    ip: 127.0.0.1
+
+# note the ; and the end of the target here!
+  Environment:
+    cmd: .
+    target: /home/source.sh;
+
+  Jupyter:
+    flavor: lab
+    options: --no-browser 
