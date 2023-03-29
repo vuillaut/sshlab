@@ -11,12 +11,12 @@ Copy the example settings file `.sshlab_config.yml` to your HOME and edit it to 
 ## Install
 
 ```
-pip install -r requirements.txt
+pip install .
 ```
 
 ## Run 
 
 ```
-python sshlab.py -c singularity_config
+sshlab -c singularity_config
 ```
 
