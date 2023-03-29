@@ -33,3 +33,21 @@ conda:
   Jupyter:
     flavor: lab
     options: --no-browser 
+
+
+docker_config:
+  SSH:
+    user: username
+    server: server.com
+    port: 8888
+    ip: 127.0.0.1
+
+  Environment:
+    cmd: docker run
+    target: docker_image_name
+    options: -p {port}:{port} -w /workdir --rm -v /workdir:/workdir
+
+  Jupyter:
+    flavor: lab
+    options: --no-browser --notebook-dir=/workspace
+
