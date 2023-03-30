@@ -78,7 +78,7 @@ def main():
         config_name = args.config
         config = configs[args.config]
 
-    print(f'Using configuration: {config_name}')
+    print(f'Using configuration: {config_name}\n')
 
     # Get the SSH settings from the config file
     user = config['SSH']['user']
@@ -108,7 +108,7 @@ def main():
     cmd = f'{ssh_cmd} "{env_cmd}"'
 
     # Launch the command using subprocess.Popen
-    print(cmd)
+    # print(cmd)
     process = subprocess.Popen(cmd, shell=True)
 
     # Register the cleanup function to be called upon script exit
