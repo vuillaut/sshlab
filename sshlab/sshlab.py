@@ -44,7 +44,7 @@ def kill_remote_jupyter(user, server):
         print(f"Terminated the Jupyter server {pid} on the remote machine.")
 
 
-def cleanup():
+def cleanup(user, server, process):
     # Get the PID of the remote Jupyter process
     kill_remote_jupyter(user, server)
 
@@ -107,12 +107,12 @@ def main():
     # Combine the SSH and Singularity command strings
     cmd = f'{ssh_cmd} "{env_cmd}"'
 
-    # Register the cleanup function to be called upon script exit
-    atexit.register(cleanup)
-
     # Launch the command using subprocess.Popen
     print(cmd)
     process = subprocess.Popen(cmd, shell=True)
+
+    # Register the cleanup function to be called upon script exit
+    atexit.register(lambda: cleanup(user, server, process))
 
     # Wait for the process to complete
     process.communicate()
