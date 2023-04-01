@@ -6,6 +6,8 @@ import socket
 import os
 import signal
 import atexit
+import time
+
 
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
@@ -27,7 +29,7 @@ def find_available_port(start_port=8888):
 def get_remote_jupyter_pid(user, server):
     jupyter_pid_cmd = f"ssh {user}@{server} 'pgrep -f jupyter'"
     try:
-        output = subprocess.check_output(jupyter_pid_cmd, shell=True).decode().strip()
+        output = subprocess.check_output(jupyter_pid_cmd, shell=True).decode().strip().split('\n')[0].strip()
         pid = int(output)
     except (subprocess.CalledProcessError, ValueError):
         pid = None
@@ -35,13 +37,32 @@ def get_remote_jupyter_pid(user, server):
     return pid
 
 
-# Function to kill the remote Jupyter process
 def kill_remote_jupyter(user, server):
     pid = get_remote_jupyter_pid(user, server)
+    
     if pid:
+        print(f"Jupyter server PID on remote machine: {pid}")
         kill_cmd = f"ssh {user}@{server} 'kill -TERM {pid} &> /dev/null'"
         subprocess.run(kill_cmd, shell=True)
-        print(f"Terminated the Jupyter server {pid} on the remote machine.")
+        print(f"Sent termination signal to Jupyter server {pid} on the remote machine.")
+        
+        # Wait for the Jupyter process to terminate
+        max_retries = 5
+        retry_count = 0
+        while retry_count < max_retries:
+            time.sleep(1)
+            current_pid = get_remote_jupyter_pid(user, server)
+            if not current_pid:
+                print(f"Terminated the Jupyter server {pid} on the remote machine.")
+                break
+            else:
+                print(f"Jupyter server {pid} still running. Retry count: {retry_count}")
+            retry_count += 1
+        else:
+            print(f"Unable to terminate the Jupyter server {pid} on the remote machine.")
+    else:
+        print("No Jupyter server found on the remote machine.")
+
 
 
 def cleanup(user, server, process):
@@ -107,15 +128,19 @@ def main():
     # Combine the SSH and Singularity command strings
     cmd = f'{ssh_cmd} "{env_cmd}"'
 
-    # Launch the command using subprocess.Popen
-    # print(cmd)
-    process = subprocess.Popen(cmd, shell=True)
+    try:
+        # Launch the command using subprocess.Popen
+        process = subprocess.Popen(cmd, shell=True)
 
-    # Register the cleanup function to be called upon script exit
-    atexit.register(lambda: cleanup(user, server, process))
+        # Register the cleanup function to be called upon script exit
+        atexit.register(lambda: cleanup(user, server, process))
 
-    # Wait for the process to complete
-    process.communicate()
+        # Wait for the process to complete
+        process.communicate()
+
+    except KeyboardInterrupt:
+        print("\nCTRL+C detected. Terminating Jupyter process...")
+        cleanup(user, server, process)
 
 
 if __name__ == '__main__':
