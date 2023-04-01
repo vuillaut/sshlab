@@ -22,6 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
             'sshlab=sshlab.sshlab:main',
+            'sshlab-kill=sshlab.sshlab_kill:main',
         ],
     },
     classifiers=[
