@@ -19,7 +19,7 @@ def find_available_port(start_port=8888):
 
 # Function to get the PID of the remote Jupyter process
 def get_remote_jupyter_pid(user, server):
-    jupyter_pid_cmd = f"ssh {user}@{server} 'pgrep -f jupyter'"
+    jupyter_pid_cmd = f"ssh {user}@{server} 'pgrep -f jupyter -u {user}'"
     try:
         output = subprocess.check_output(jupyter_pid_cmd, shell=True).decode().strip().split('\n')[0].strip()
         pid = int(output)
