@@ -78,11 +78,15 @@ def main():
     # Instead we have to create a temporary directory and symlink the logdirs there
     logdirs = [f'{os.path.join(logdir, exp_name)}' for exp_name in exp_names]
     
-    tmp_dir_runs = os.path.join(logdir, os.path.basename(tempfile.mkdtemp()))
-    symlink_cmd = f'mkdir -p {tmp_dir_runs};'
-    symlink_cmd += ";".join([f'ln -s {logdir} {os.path.join(tmp_dir_runs, os.path.basename(logdir))}' for logdir in logdirs])
-    symlink_cmd += ";"
-  
+    if len(logdirs) == 1:
+        tmp_dir_runs = logdirs[0]
+        symlink_cmd = ""
+    else:
+        tmp_dir_runs = os.path.join(logdir, os.path.basename(tempfile.mkdtemp()))
+        symlink_cmd = f'mkdir -p {tmp_dir_runs};'
+        symlink_cmd += ";".join([f'ln -s {logdir} {os.path.join(tmp_dir_runs, os.path.basename(logdir))}' for logdir in logdirs])
+        symlink_cmd += ";"
+    
     env_cmd = f'{symlink_cmd} {env_cmd} {env_cmd_options} {env_target} {tensorboard_cmd} --logdir={tmp_dir_runs} --bind_all --port {port} '
 
     # Combine the SSH and Singularity command strings
