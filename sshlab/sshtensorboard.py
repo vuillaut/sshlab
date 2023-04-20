@@ -5,13 +5,19 @@ from pathlib import Path
 import os
 import signal
 import atexit
+import tempfile
+import shutil
 
 import utils
 
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
 
-def cleanup(user, server, process):
+def cleanup(user, server, process, tmpdir):
+
+    # Remove the temporary directory
+    utils.delete_remote_dir(user, server, tmpdir)
+
     # Get the PID of the remote Jupyter process
     utils.kill_remote_tensorboard(user, server)
 
@@ -65,9 +71,19 @@ def main():
     tensorboard_cmd = config['Tensorboard']['cmd']
     logdir = config['Tensorboard']['logdir']
     exp_names = args.exp_names.split(',')
-    logdirs = ",".join([f'{exp_name}:{os.path.join(logdir, exp_name)}' for exp_name in exp_names])
+   
+    # this should work if we believe stackoverflow:
+    # logdirs = ",".join([f'{exp_name}:{os.path.join(logdir, exp_name)}' for exp_name in exp_names])
 
-    env_cmd = f'{env_cmd} {env_cmd_options} {env_target} {tensorboard_cmd} --logdir={logdirs} --bind_all --port {port}'
+    # Instead we have to create a temporary directory and symlink the logdirs there
+    logdirs = [f'{os.path.join(logdir, exp_name)}' for exp_name in exp_names]
+    
+    tmp_dir_runs = os.path.join(logdir, os.path.basename(tempfile.mkdtemp()))
+    symlink_cmd = f'mkdir -p {tmp_dir_runs};'
+    symlink_cmd += ";".join([f'ln -s {logdir} {os.path.join(tmp_dir_runs, os.path.basename(logdir))}' for logdir in logdirs])
+    symlink_cmd += ";"
+  
+    env_cmd = f'{symlink_cmd} {env_cmd} {env_cmd_options} {env_target} {tensorboard_cmd} --logdir={tmp_dir_runs} --bind_all --port {port} '
 
     # Combine the SSH and Singularity command strings
     cmd = f'{ssh_cmd} "{env_cmd}"'
@@ -79,14 +95,14 @@ def main():
         process = subprocess.Popen(cmd, shell=True)
 
         # Register the cleanup function to be called upon script exit
-        atexit.register(lambda: cleanup(user, server, process))
+        atexit.register(lambda: cleanup(user, server, process, tmp_dir_runs))
 
         # Wait for the process to complete
         process.communicate()
 
     except KeyboardInterrupt:
         print("\nCTRL+C detected. Terminating Jupyter process...")
-        cleanup(user, server, process)
+        cleanup(user, server, process, tmp_dir_runs)
 
 
 if __name__ == '__main__':
