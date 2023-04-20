@@ -17,11 +17,10 @@ def find_available_port(start_port=8888):
     return port
 
 
-# Function to get the PID of the remote Jupyter process
-def get_remote_jupyter_pid(user, server):
-    jupyter_pid_cmd = f"ssh {user}@{server} 'pgrep -f jupyter -u {user}'"
+def get_remote_cmd_pid(user, server, cmd):
+    pid_cmd = f"ssh {user}@{server} 'pgrep -f \"{cmd}\" -u {user}'"
     try:
-        output = subprocess.check_output(jupyter_pid_cmd, shell=True).decode().strip().split('\n')[0].strip()
+        output = subprocess.check_output(pid_cmd, shell=True).decode().strip().split('\n')[0].strip()
         pid = int(output)
     except (subprocess.CalledProcessError, ValueError):
         pid = None
@@ -29,28 +28,49 @@ def get_remote_jupyter_pid(user, server):
     return pid
 
 
-def kill_remote_jupyter(user, server):
-    pid = get_remote_jupyter_pid(user, server)
+def get_remote_jupyter_pid(user, server):
+    jupyter_cmd = 'jupyter'
+    return get_remote_cmd_pid(user, server, jupyter_cmd)
+
+
+def get_remote_tensorboard_pid(user, server):
+    tensorboard_cmd = 'tensorboard'
+    return get_remote_cmd_pid(user, server, tensorboard_cmd)
+
+
+def kill_remote_process(user, server, cmd):
+    pid = get_remote_cmd_pid(user, server, cmd)
+    print(f"PID {pid}")
     
     if pid:
-        print(f"Jupyter server PID on remote machine: {pid}")
+        print(f"Process PID on remote machine: {pid}")
         kill_cmd = f"ssh {user}@{server} 'kill -TERM {pid} &> /dev/null'"
         subprocess.run(kill_cmd, shell=True)
-        print(f"Sent termination signal to Jupyter server {pid} on the remote machine.")
+        print(f"Sent termination signal to process {pid} on the remote machine.")
         
-        # Wait for the Jupyter process to terminate
+        # Wait for the process to terminate
         max_retries = 5
         retry_count = 0
         while retry_count < max_retries:
             time.sleep(1)
-            current_pid = get_remote_jupyter_pid(user, server)
+            current_pid = get_remote_cmd_pid(user, server, cmd)
             if not current_pid:
-                print(f"Terminated the Jupyter server {pid} on the remote machine.")
+                print(f"Terminated the process {pid} on the remote machine.")
                 break
             else:
-                print(f"Jupyter server {pid} still running. Retry count: {retry_count}")
+                print(f"Process {pid} still running. Retry count: {retry_count}")
             retry_count += 1
         else:
-            print(f"Unable to terminate the Jupyter server {pid} on the remote machine.")
+            print(f"Unable to terminate the process {pid} on the remote machine.")
     else:
-        print("No Jupyter server found on the remote machine.")
+        print("No process found on the remote machine.")
+
+def kill_remote_jupyter(user, server):
+    jupyter_cmd = 'jupyter'
+    kill_remote_process(user, server, jupyter_cmd)
+
+
+def kill_remote_tensorboard(user, server):
+    tensorboard_cmd = 'tensorboard'
+    kill_remote_process(user, server, tensorboard_cmd)
+
