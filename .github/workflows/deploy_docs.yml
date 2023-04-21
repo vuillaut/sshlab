@@ -28,8 +28,8 @@ jobs:
         cd docs
         make html
 
-    - name: Deploy documentation to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: GitHub Pages action
+      uses: peaceiris/actions-gh-pages@v3.9.3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/build/html
