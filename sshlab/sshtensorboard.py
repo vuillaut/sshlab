@@ -6,9 +6,8 @@ import os
 import signal
 import atexit
 import tempfile
-import shutil
 
-import utils
+from . import utils
 
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
