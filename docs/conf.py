@@ -1,12 +1,13 @@
 import os
 import sys
+import sshlab
 
 sys.path.insert(0, os.path.abspath('..'))
 
 project = 'sshlab'
 copyright = '2023, Thomas Vuillaume'
 author = 'Thomas Vuillaume'
-release = '0.1.4'
+release = sshlab.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
