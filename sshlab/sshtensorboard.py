@@ -92,7 +92,7 @@ def main():
     # Combine the SSH and Singularity command strings
     cmd = f'{ssh_cmd} "{env_cmd}"'
 
-    print(cmd)
+    print(f"\n** Open tensorboard in your browser at: http://{ip}:{port}  **\n\n")
 
     try:
         # Launch the command using subprocess.Popen

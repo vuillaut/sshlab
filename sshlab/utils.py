@@ -65,6 +65,7 @@ def kill_remote_process(user, server, cmd):
     else:
         print("No process found on the remote machine.")
 
+
 def kill_remote_jupyter(user, server):
     jupyter_cmd = 'jupyter'
     kill_remote_process(user, server, jupyter_cmd)
@@ -74,3 +75,8 @@ def kill_remote_tensorboard(user, server):
     tensorboard_cmd = 'tensorboard'
     kill_remote_process(user, server, tensorboard_cmd)
 
+
+def delete_remote_dir(user, server, dir_path):
+    print(f"Deleting temporary directory {dir_path} on the remote machine.")
+    delete_cmd = f"ssh {user}@{server} 'rm -rf {dir_path}'"
+    subprocess.run(delete_cmd, shell=True)

@@ -12,7 +12,6 @@ from . import utils
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
 
-
 def cleanup(user, server, process):
     # Get the PID of the remote Jupyter process
     utils.kill_remote_jupyter(user, server)
@@ -56,7 +55,7 @@ def main():
     ip = config['SSH'].get('ip', '127.0.0.1')
 
     # Check if the specified port is available, and find an available port if it's not
-    port = specified_port if utils.is_port_available(specified_port) else find_available_port(specified_port)
+    port = specified_port if utils.is_port_available(specified_port) else utils.find_available_port(specified_port)
 
     # Build the SSH command string
     ssh_cmd = f'ssh -L {port}:{ip}:{port} {user}@{server}'
