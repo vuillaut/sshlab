@@ -2,15 +2,22 @@ import argparse
 import os
 import yaml
 from pathlib import Path
-from . utils import get_remote_jupyter_pid, kill_remote_jupyter
+from . utils import kill_remote_process
 
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
 def build_argparser():
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', '-c', default=None, help='User configuration name to use (defined in the config file)')
-    parser.add_argument('--file', '-f', default=DEFAULT_CONFIG_FILE, type=Path, help=f'YAML configuration file, default: {DEFAULT_CONFIG_FILE}')
+    parser.add_argument('--config', '-c', 
+                        default=None, 
+                        help='User configuration name to use (defined in the config file)')
+    parser.add_argument('--file', '-f', 
+                        default=DEFAULT_CONFIG_FILE,
+                         type=Path,
+                         help=f'YAML configuration file, default: {DEFAULT_CONFIG_FILE}')
+    parser.add_argument('--process', '-p', default='jupyter', type=str,
+                         help=f'Process name to kill, default: jupyter')
     args = parser.parse_args()
     return args
 
@@ -35,7 +42,7 @@ def main():
     server = config['SSH']['server']
 
     # Kill the remote Jupyter process
-    kill_remote_jupyter(user, server)
+    kill_remote_process(user, server, args.process)
 
 if __name__ == '__main__':
     main()

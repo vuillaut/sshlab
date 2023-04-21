@@ -12,7 +12,6 @@ from . import utils
 DEFAULT_CONFIG_FILE = os.getenv("HOME") + "/.sshlab_config.yml"
 
 
-
 def cleanup(user, server, process):
     # Get the PID of the remote Jupyter process
     utils.kill_remote_jupyter(user, server)
