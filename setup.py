@@ -19,10 +19,17 @@ setup(
     install_requires=[
         'PyYAML',
     ],
+    extras_require={
+        'doc': [
+            'sphinx',
+            'furo',
+        ]
+    },
     entry_points={
         'console_scripts': [
             'sshlab=sshlab.sshlab:main',
             'sshlab-kill=sshlab.sshlab_kill:main',
+            'sshlab-tensorboard=sshlab.sshtensorboard:main'
         ],
     },
     classifiers=[
