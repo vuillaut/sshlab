@@ -10,8 +10,8 @@ Introduction
 ============
 
 sshlab is a Python library that simplifies the process of launching Jupyter notebooks, TensorBoard,
- and managing remote processes on remote servers via SSH. It provides an easy-to-use command-line interface for starting, 
- stopping, and managing Jupyter and TensorBoard instances.
+and managing remote processes on remote servers via SSH. It provides an easy-to-use command-line interface for starting, 
+stopping, and managing Jupyter and TensorBoard instances.
 
 Features
 --------
