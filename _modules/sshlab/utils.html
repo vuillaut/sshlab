@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
         <title>sshlab.utils - sshlab 0.2.1-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
@@ -239,7 +239,7 @@
     <span class="k">return</span> <span class="n">get_remote_cmd_pid</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">tensorboard_cmd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="kill_remote_process"><a class="viewcode-back" href="../../sshlab.utils.html#sshlab.utils.kill_remote_process">[docs]</a><span class="k">def</span> <span class="nf">kill_remote_process</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="kill_remote_process"><a class="viewcode-back" href="../../sshlab.utils.html#sshlab.utils.kill_remote_process">[docs]</a><span class="k">def</span> <span class="nf">kill_remote_process</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="n">pid</span> <span class="o">=</span> <span class="n">get_remote_cmd_pid</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PID </span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
@@ -250,10 +250,9 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sent termination signal to process </span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2"> on the remote machine.&quot;</span><span class="p">)</span>
         
         <span class="c1"># Wait for the process to terminate</span>
-        <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">5</span>
         <span class="n">retry_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="n">retry_count</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
             <span class="n">current_pid</span> <span class="o">=</span> <span class="n">get_remote_cmd_pid</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">current_pid</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Terminated the process </span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2"> on the remote machine.&quot;</span><span class="p">)</span>
