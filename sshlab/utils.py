@@ -38,7 +38,7 @@ def get_remote_tensorboard_pid(user, server):
     return get_remote_cmd_pid(user, server, tensorboard_cmd)
 
 
-def kill_remote_process(user, server, cmd):
+def kill_remote_process(user, server, cmd, max_retries=2):
     pid = get_remote_cmd_pid(user, server, cmd)
     print(f"PID {pid}")
     
@@ -49,10 +49,9 @@ def kill_remote_process(user, server, cmd):
         print(f"Sent termination signal to process {pid} on the remote machine.")
         
         # Wait for the process to terminate
-        max_retries = 5
         retry_count = 0
         while retry_count < max_retries:
-            time.sleep(1)
+            time.sleep(0.5)
             current_pid = get_remote_cmd_pid(user, server, cmd)
             if not current_pid:
                 print(f"Terminated the process {pid} on the remote machine.")
